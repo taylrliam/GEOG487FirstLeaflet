@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Leaflet Map</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
+
+  <style>
+    #map { width: 100%; height: 90vh; }
+    .hospital-plus {
+  color: red;
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  line-height: 20px;
+}
+  </style>
+</head>
+
+<body>
+    <h2>Healthcare Facilities and Transportation Network — Lethbridge, AB</h2> 
+    
+ 
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+
+  <script>
+    // make Map
+    const map = L.map('map').setView([49.6956, -112.8451], 11);
+
+    // makes basemap
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+
+    // 3) Adds the geojson --> You can use this for all other geojsons save for future!
+   <!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Leaflet Map</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
+
+  <style>
+    #map { width: 100%; height: 100vh; }
+  </style>
+</head>
+
+<body>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+
+  <script>
+    //Make Map
+    const map = L.map('map').setView([49.6956, -112.8451], 11.5);
+
+    // 2) Basemap
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+
+    // 3) Adds the geojson --> You can use this for all other geojsons save for future!
+   //Lakes and rivers 
+fetch("Lakes_and_Rivers.geojson")
+  .then(r => r.json())
+  .then(data => {
+    L.geoJSON(data, {
+      style: {
+        color: "#1f78b4",
+        weight: 1, ///this fills in water 
+        fillColor: "#1f78b4",
+        fillOpacity: 0.5
+      }
+    }).addTo(map);
+  });
+
+
+
+fetch("Street_Network.geojson")
+  .then(r => r.json())
+  .then(data => {
+    const streets = L.geoJSON(data, {
+      style: { color: "#2c3e50", weight: 2 }
+    }).addTo(map);
+
+    map.fitBounds(streets.getBounds()); // zooms to streets
+  });
+
+
+//Healthcare facilites
+fetch("Health_Care_Facilities.geojson")
+  .then(r => r.json())
+  .then(data => {
+    L.geoJSON(data, {
+      pointToLayer: (feature, latlng) => {
+        const plusIcon = L.divIcon({
+          className: "hospital-plus",
+          html: "+",
+          iconSize: [20, 20],
+          iconAnchor: [10, 10]
+        });
+        return L.marker(latlng, { icon: plusIcon });
+      },
+      onEachFeature: (feature, layer) => {
+        layer.bindPopup("Health Care Facility");
+      }
+    }).addTo(map);
+  });
+  
+
+  </script>
+</body>
+</html>
